@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 
@@ -38,8 +39,8 @@ public class Todo extends Activity {
         itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
         // Adding dummy items
-        items.add("First Item");
-        items.add("Second Item");
+        //items.add("First Item");
+        //items.add("Second Item");
         //setting up a new listener for removing items
         setupListViewListener();
     }
@@ -62,6 +63,11 @@ public class Todo extends Activity {
      */
     public void addTodoItem(View v){
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
+        String enteredText = etNewItem.getText().toString();
+        if (enteredText.matches("")){
+            Toast.makeText(this, "Please input a task first", Toast.LENGTH_SHORT).show();
+            return;
+        }
         itemsAdapter.add(etNewItem.getText().toString());
         etNewItem.setText("");
         // save items to txt file
