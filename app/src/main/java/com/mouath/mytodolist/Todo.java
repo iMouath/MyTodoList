@@ -2,6 +2,7 @@ package com.mouath.mytodolist;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,17 @@ public class Todo extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
 
+
+    /* ContextMenu stuff - to be replaced with better code
+    public void onCreateContextMenu(final ContextMenu menu, final View v,
+                                    final ContextMenu.ContextMenuInfo menuInfo){
+        if (v.getId()==R.id.lvItems){
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+            menu.setHeaderTitle("Options");
+        }
+    }
+    */
+
         //defining lvItems
         lvItems = (ListView) findViewById(R.id.lvItems);
         //defining items as array list
@@ -38,16 +50,75 @@ public class Todo extends Activity {
         // I need to google 'Adapter'
         itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
-        // Adding dummy items
-        //items.add("First Item");
-        //items.add("Second Item");
         //setting up a new listener for removing items
-        setupListViewListener();
+        //setupListViewListener();
+        registerForContextMenu(lvItems);
     }
+    //ContextMenu stuff
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo){
+        super.onCreateContextMenu(menu, view, menuInfo);
+        /*
+        Menu Title & Options - YOU NEED TO SET THE VALUES IN Strings.xml !!
+        Also Reorganize them properly
+         */
+        menu.setHeaderTitle(getString(R.string.select_option));
+        menu.add(0, view.getId(), 0, R.string.remove_option);
+        menu.add(0, view.getId(), 1, R.string.edit_option);
+        menu.add(0, view.getId(), 2, R.string.complete_option);
+        menu.add(0, view.getId(), 3, R.string.color_option);
+        menu.add(0, view.getId(), 4, R.string.share_option);
+
+    }
+
+    // When Item is selected call
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int position = info.position;
+        /*
+        if statements for each options in context menu
+        Maybe implement a better code here ? nested.
+         */
+
+        if(item.getOrder()==0){ //0 item = remove
+            // assign temp variable to the position of item selected
+            String selectedItem = items.get(position);
+            // remove the item
+            items.remove(selectedItem);
+            // notify user using a toast
+            Toast.makeText(this, R.string.removed_toast, Toast.LENGTH_SHORT).show();
+            // update items view
+            itemsAdapter.notifyDataSetChanged();
+            // update items on file when one is removed
+            saveItems();
+            }
+        else if(item.getOrder()==1){ // 1 item = edit
+            Toast.makeText(this, "Edit Option Chosen", Toast.LENGTH_SHORT).show();
+            // Edit Code goes HERE
+        }
+        else if(item.getOrder()==2){ //2 item = Complete
+            // Completed Code goes here
+            Toast.makeText(this, "Completed Option Chosen", Toast.LENGTH_SHORT).show();
+        }
+        else if(item.getOrder()==3){ //3 item = color
+            // Color Code Goes here
+            Toast.makeText(this, "Color Option Chosen", Toast.LENGTH_SHORT).show();
+        }
+        else if(item.getOrder()==4) { //4 item = share
+            // Share Code Goes here
+            Toast.makeText(this, "Share Option Chosen", Toast.LENGTH_SHORT).show();
+        }
+
+
+    return true;
+    }
+    /*
     private void setupListViewListener(){
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long rowID) {
+
                 items.remove(position);
                 itemsAdapter.notifyDataSetChanged();
                 // update items on file when one is removed
@@ -56,6 +127,7 @@ public class Todo extends Activity {
             }
         });
     }
+    */
     /*
     Below here we already defined 'addTodoItem' as onClick action in the xml
     here its actions are coded and it basically adds items from the text field into the list
@@ -85,6 +157,7 @@ public class Todo extends Activity {
             e.printStackTrace();
         }
     }
+    //Saving Items into txt file
     private void saveItems(){
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "todo.txt");
