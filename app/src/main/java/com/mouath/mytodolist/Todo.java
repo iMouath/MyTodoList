@@ -1,7 +1,12 @@
 package com.mouath.mytodolist;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.StrikethroughSpan;
+import android.text.style.UnderlineSpan;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,9 +15,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,21 +102,40 @@ public class Todo extends Activity {
             }
         else if(item.getOrder()==1){ // 1 item = edit
             Toast.makeText(this, "Edit Option Chosen", Toast.LENGTH_SHORT).show();
+
             // Edit Code goes HERE
         }
         else if(item.getOrder()==2){ //2 item = Complete
+            /* TO BE IMPLEMENTED LATER
             // Completed Code goes here
-            Toast.makeText(this, "Completed Option Chosen", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Completed Option Chosen", Toast.LENGTH_SHORT).show();
             //STOPSHIP
             //TextView selectedItem2 = (TextView)(lvItems.getItemAtPosition(position));
+            String selectedItem = lvItems.getItemAtPosition(position).toString();
+            SpannableString content = new SpannableString(selectedItem);
+            //selectedItem2.setPaintFlags(selectedItem2.setPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            content.setSpan(new StrikethroughSpan(), 0, selectedItem.length(), 0);
+            itemsAdapter.add(content.toString());
+
+            itemsAdapter.notifyDataSetChanged();
+            saveItems();
+            Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
             //TextView selectedItem2 = (TextView) (lvItems.getItemAtPosition(info.position));
-            //selectedItem2.setPaintFlags(selectedItem2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            //selectedItem.setPaintFlags(selectedItem.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             //itemsAdapter.notifyDataSetChanged();
             //saveItems();
+            */
         }
         else if(item.getOrder()==3){ //3 item = color
             // Color Code Goes here
             Toast.makeText(this, "Color Option Chosen", Toast.LENGTH_SHORT).show();
+            //String s = (String) lvItems.getItemAtPosition(position);
+            TextView selectedItem = (TextView) lvItems.getChildAt(position);
+            selectedItem.setTextColor(Color.RED);
+            itemsAdapter.notifyDataSetChanged();
+            //String selectedItem = items.get(position);
+            //selectedItem.setTextColor(Color.Red);
+
 
         }
         else if(item.getOrder()==4) { //4 item = share
