@@ -100,10 +100,17 @@ public class Todo extends Activity {
         else if(item.getOrder()==2){ //2 item = Complete
             // Completed Code goes here
             Toast.makeText(this, "Completed Option Chosen", Toast.LENGTH_SHORT).show();
+            //STOPSHIP
+            //TextView selectedItem2 = (TextView)(lvItems.getItemAtPosition(position));
+            //TextView selectedItem2 = (TextView) (lvItems.getItemAtPosition(info.position));
+            //selectedItem2.setPaintFlags(selectedItem2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            //itemsAdapter.notifyDataSetChanged();
+            //saveItems();
         }
         else if(item.getOrder()==3){ //3 item = color
             // Color Code Goes here
             Toast.makeText(this, "Color Option Chosen", Toast.LENGTH_SHORT).show();
+
         }
         else if(item.getOrder()==4) { //4 item = share
             // Share Code Goes here
