@@ -1,12 +1,9 @@
 package com.mouath.mytodolist;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.StrikethroughSpan;
-import android.text.style.UnderlineSpan;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,11 +27,20 @@ public class Todo extends Activity {
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
+    DBAdapter myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
+        openDB();
+        Cursor cursor = myDb.getAllRows();
+        displayRecordSet(cursor);
+        @Override
+        protected void onDestroy() {
+            super.onDestroy();
+            closeDB();
+        }
 
 
     /* ContextMenu stuff - to be replaced with better code
@@ -61,6 +66,45 @@ public class Todo extends Activity {
         //setupListViewListener();
         registerForContextMenu(lvItems);
     }
+
+    private void displayRecordSet(Cursor cursor) {
+        // populate the message from the cursor
+
+        // Reset cursor to start, checking to see if there's data:
+        if (cursor.moveToFirst()) {
+            do {
+                // Process the data:
+                int id = cursor.getInt(DBAdapter.COL_ROWID);
+                String task = cursor.getString(DBAdapter.COL_TASK);
+                String color = cursor.getString(DBAdapter.COL_TASKCOLOR);
+                int completed = cursor.getInt(DBAdapter.COL_TASKCOMPLETED);
+
+                /* Append data to the message:
+                message += "id=" + id
+                        +", name=" + name
+                        +", #=" + studentNumber
+                        +", Colour=" + favColour
+                        +"\n";
+                */
+            } while(cursor.moveToNext());
+        }
+
+        // Close the cursor to avoid a resource leak.
+        cursor.close();
+
+        displayText(tasks);
+    }
+    }
+
+    private void closeDB() {
+        myDb.close();
+    }
+
+    private void openDB() {
+        myDb = new DBAdapter(this);
+        myDb.open();
+    }
+
     //ContextMenu stuff
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo){
@@ -173,14 +217,16 @@ public class Todo extends Activity {
             Toast.makeText(this, "Please input a task first", Toast.LENGTH_SHORT).show();
             return;
         }
-        itemsAdapter.add(etNewItem.getText().toString());
+        //itemsAdapter.add(etNewItem.getText().toString());
         etNewItem.setText("");
         // save items to txt file
-        saveItems();
+        //saveItems();
+        myDb.insertRow(etNewItem.getText().toString(),null,0);
     }
 
     //Reading Items from txt file
-    private void readItems(){
+    //private void readItems(){
+        /*
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "todo.txt");
         try {
@@ -189,7 +235,8 @@ public class Todo extends Activity {
             items = new ArrayList<String>();
             e.printStackTrace();
         }
-    }
+        */
+    //}
     //Saving Items into txt file
     private void saveItems(){
         File filesDir = getFilesDir();
